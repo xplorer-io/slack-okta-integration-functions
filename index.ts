@@ -1,14 +1,9 @@
 import { HttpFunction } from "@google-cloud/functions-framework";
-// import { handleSlackEvent } from "handlers/slackHandler";
-import {
-  onboardToOkta,
-  removeFromOkta,
-  fetchOktaUsers,
-} from "./services/oktaService";
-import { fetchActiveSlackUsers } from "./services/slackService";
+import { onboardToOkta, removeFromOkta, fetchOktaUsers } from "./oktaService";
+import { fetchActiveSlackUsers } from "./slackService";
 import { OktaUser, Slackuser } from "./types";
 import dotenv from "dotenv";
-dotenv.config({ path: "../.env.local" });
+dotenv.config({ path: "./env.local" });
 
 // logic for handling slack events
 const handleSlackEvent = async (event: any) => {
