@@ -1,0 +1,49 @@
+name: Deploy slack-okta-integration to Google Cloud functions
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: "actions/checkout@v4"
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: "actions/setup-node@v3"
+        with:
+          node-version: 20
+
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install
+
+      # Build the project
+      - name: Build the project
+        run: pnpm run build
+
+      # Authenticate with Google Cloud
+      - id: "auth"
+        name: Authenticate with Google Cloud
+        uses: "google-github-actions/auth@v2"
+        with:
+          project_id: pras-sandbox-405410
+          workload_identity_provider: ${{secrets.GOOGLE_CLOUD_WORKLOAD_IDENTITY_PROVIDER }}
+
+      # Deploy to Google Cloud Functions
+      - name: "Deploy to gen2 cloud function"
+        run: |
+          gcloud functions deploy slackEventHandler \
+          --gen2 \
+          --region=us-east1 \
+          --runtime=nodejs20 \
+          --source=. \
+          --entry-point=slackEventHandler \
+          --trigger-http \
+          --allow-unauthenticated
