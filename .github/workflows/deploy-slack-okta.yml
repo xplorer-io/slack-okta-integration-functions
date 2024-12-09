@@ -44,6 +44,7 @@ jobs:
         with:
           project_id: pras-sandbox-405410
           workload_identity_provider: ${{secrets.GOOGLE_CLOUD_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GOOGLE_CLOUD_WORKLOAD_IDP_SERVICE_ACCOUNT }}
 
       # Deploy to Google Cloud Functions
       - name: "Deploy to gen2 cloud function"
