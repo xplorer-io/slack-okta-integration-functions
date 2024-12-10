@@ -2,7 +2,7 @@ import { WebClient } from "@slack/web-api";
 import { Slackuser } from "./types";
 
 // initialize slack client
-const slackClient = new WebClient(process.env.SLACK_TOKEN);
+const slackClient = new WebClient(process.env.SLACK_YASH_TOKEN);
 
 export const fetchActiveSlackUsers = async (): Promise<Slackuser[]> => {
   //get all slack users
