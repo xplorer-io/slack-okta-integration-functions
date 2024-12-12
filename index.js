@@ -25,6 +25,8 @@ const handleSlackEvent = (event) => __awaiter(void 0, void 0, void 0, function* 
         const firstName = event.user.profile.first_name;
         const lastName = event.user.profile.last_name;
         console.log(`New user joined: ${userEmail}`);
+        console.log(`New user first name: ${firstName}`);
+        console.log(`New user last name: ${lastName}`);
         yield (0, oktaService_1.onboardToOkta)(userEmail, firstName, lastName);
     }
     else if ((event === null || event === void 0 ? void 0 : event.type) === "user_change" && event.user.deleted) {

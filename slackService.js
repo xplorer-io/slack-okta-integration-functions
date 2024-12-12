@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchActiveSlackUsers = void 0;
 const web_api_1 = require("@slack/web-api");
 // initialize slack client
-const slackClient = new web_api_1.WebClient(process.env.SLACK_TOKEN);
+const slackClient = new web_api_1.WebClient(process.env.SLACK_YASH_TOKEN);
 const fetchActiveSlackUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     //get all slack users
