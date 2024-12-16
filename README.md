@@ -46,21 +46,6 @@ The application listens to Slack events via the Slack Events API, processes them
 
 ![Okta User Provisioning Diagram](https://github.com/user-attachments/assets/bdae8ac1-e264-4160-af7b-14c820b90191)
 
-
-**Workflow**:
-
-1. **Slack Event Trigger**:
-
-   - Slack sends events to a Google Cloud Run Function endpoint.
-
-2. **Event Handling**:
-
-   - For `team_join`, the app onboards users to Okta.
-   - For `user_change` (when `user.deleted` is `true`), it removes the user from Okta.
-
-3. **Okta API**:
-   - Uses Okta's REST API to create and delete users.
-
 ---
 
 ## Prerequisites
@@ -86,6 +71,8 @@ The application listens to Slack events via the Slack Events API, processes them
 2. User deletion (`user_change` with `deleted: true`):
    - Slack sends the updated user details.
    - The app matches the user in Okta based on full name and removes them.
+
+---
 
 ## Deployment
 
