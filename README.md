@@ -19,9 +19,6 @@ The project is deployed as a **Google Cloud Run Function**, triggered via Slack 
 6. [How It Works](#how-it-works)
 7. [Deployment](#deployment)
 8. [Usage](#usage)
-9. [Logging and Error Handling](#logging-and-error-handling)
-10. [Contributing](#contributing)
-11. [License](#license)
 
 ---
 
@@ -46,6 +43,9 @@ The project is deployed as a **Google Cloud Run Function**, triggered via Slack 
 ## Architecture Overview
 
 The application listens to Slack events via the Slack Events API, processes them, and performs corresponding operations in Okta using Okta's API.
+
+![Okta User Provisioning Diagram](https://github.com/user-attachments/assets/bdae8ac1-e264-4160-af7b-14c820b90191)
+
 
 **Workflow**:
 
