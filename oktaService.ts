@@ -41,6 +41,7 @@ export const onboardToOkta = async (
           lastName,
           email,
           login: email,
+          // mobilePhone: "000-000-000",
         },
       },
       {
@@ -56,11 +57,7 @@ export const onboardToOkta = async (
       `Onboarded user: ${firstName} ${lastName} , email :  (${email})`
     );
   } catch (error: any) {
-    console.error(
-      `Error onboarding user ${email}: ${
-        error.response?.statusText || error.message
-      }`
-    );
+    console.error(`Error onboarding user ${email}: ${error.message}`);
     throw new Error(`Failed to onboard user ${email}`);
   }
 };
