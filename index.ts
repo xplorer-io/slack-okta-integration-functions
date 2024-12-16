@@ -19,21 +19,36 @@ const handleSlackEvent = async (event: any) => {
     await onboardToOkta(userEmail, firstName, lastName);
   } else if (event?.type === "user_change" && event.user.deleted) {
     // User removed from Slack group
-    const userEmail = event.user.profile.email;
+    const slackFullName = event.user.profile.real_name.toLowerCase();
+    console.log(`User left the Slack group: ${slackFullName}`);
 
-    console.log(`User left the Slack group: ${userEmail}`);
-    const activeSlackUsers: Slackuser[] = await fetchActiveSlackUsers();
-    const oktaUsers: OktaUser[] = await fetchOktaUsers();
+    try {
+      // fetch all okta users
+      const oktaUsers: OktaUser[] = await fetchOktaUsers();
 
-    // Find corresponding Okta user
-    const oktaUser = oktaUsers.find(
-      (oktaUser) => oktaUser.profile.email === userEmail
-    );
+      // Find corresponding Okta user
+      const matchedUser = oktaUsers.find((oktaUser) => {
+        const oktaFullName =
+          `${oktaUser.profile.firstName} ${oktaUser.profile.lastName}`.trim();
+        return oktaFullName.toLowerCase() === slackFullName;
+      });
 
-    if (oktaUser) {
-      await removeFromOkta(oktaUser.id);
-    } else {
-      console.error(`Okta user not found for email: ${userEmail}`);
+      if (matchedUser) {
+        console.log(
+          `Matched Slack user ${slackFullName} with okta user ID: ${matchedUser.id}`
+        );
+
+        await removeFromOkta(matchedUser.id);
+      } else {
+        console.error(
+          `No matching okta user found for slack user : ${slackFullName}`
+        );
+      }
+    } catch (error: any) {
+      console.error(
+        `Error while processing user_change event for slack User ${slackFullName} :`,
+        error.message
+      );
     }
   }
 };

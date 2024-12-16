@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.slackEventHandler = void 0;
 const oktaService_1 = require("./oktaService");
-const slackService_1 = require("./slackService");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config({ path: "./env.local" });
 // logic for handling slack events
@@ -31,17 +30,26 @@ const handleSlackEvent = (event) => __awaiter(void 0, void 0, void 0, function* 
     }
     else if ((event === null || event === void 0 ? void 0 : event.type) === "user_change" && event.user.deleted) {
         // User removed from Slack group
-        const userEmail = event.user.profile.email;
-        console.log(`User left the Slack group: ${userEmail}`);
-        const activeSlackUsers = yield (0, slackService_1.fetchActiveSlackUsers)();
-        const oktaUsers = yield (0, oktaService_1.fetchOktaUsers)();
-        // Find corresponding Okta user
-        const oktaUser = oktaUsers.find((oktaUser) => oktaUser.profile.email === userEmail);
-        if (oktaUser) {
-            yield (0, oktaService_1.removeFromOkta)(oktaUser.id);
+        const slackFullName = event.user.profile.real_name.toLowerCase();
+        console.log(`User left the Slack group: ${slackFullName}`);
+        try {
+            // fetch all okta users
+            const oktaUsers = yield (0, oktaService_1.fetchOktaUsers)();
+            // Find corresponding Okta user
+            const matchedUser = oktaUsers.find((oktaUser) => {
+                const oktaFullName = `${oktaUser.profile.firstName} ${oktaUser.profile.lastName}`.trim();
+                return oktaFullName.toLowerCase() === slackFullName;
+            });
+            if (matchedUser) {
+                console.log(`Matched Slack user ${slackFullName} with okta user ID: ${matchedUser.id}`);
+                yield (0, oktaService_1.removeFromOkta)(matchedUser.id);
+            }
+            else {
+                console.error(`No matching okta user found for slack user : ${slackFullName}`);
+            }
         }
-        else {
-            console.error(`Okta user not found for email: ${userEmail}`);
+        catch (error) {
+            console.error(`Error while processing user_change event for slack User ${slackFullName} :`, error.message);
         }
     }
 });

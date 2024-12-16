@@ -45,7 +45,9 @@ const onboardToOkta = (email, firstName, lastName) => __awaiter(void 0, void 0, 
                 lastName,
                 email,
                 login: email,
-                mobilePhone: "000-000-000",
+            },
+            credentials: {
+                password: { value: "tlpWENT2m" },
             },
         }, {
             params: {
@@ -54,6 +56,8 @@ const onboardToOkta = (email, firstName, lastName) => __awaiter(void 0, void 0, 
                 nextLogin: "changePassword",
             },
         });
+        // response from okta
+        console.log("Response from Okta: ", JSON.stringify(response.data, null, 2));
         console.log(`Onboarded user: ${firstName} ${lastName} , email :  (${email})`);
     }
     catch (error) {
@@ -71,13 +75,21 @@ const onboardToOkta = (email, firstName, lastName) => __awaiter(void 0, void 0, 
 exports.onboardToOkta = onboardToOkta;
 // Delete user from Okta
 const removeFromOkta = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
-        yield oktaApi.delete(`/users/${userId}`);
+        const response = yield oktaApi.delete(`/users/${userId}`);
+        console.log(`Response from Okta for deleting user  ${userId} : Status code: ${response.status}`);
         console.log(`Removed user with ID: ${userId}`);
     }
     catch (error) {
         console.error(`Error removing user with ID ${userId}: ${((_a = error.response) === null || _a === void 0 ? void 0 : _a.statusText) || error.message}`);
+        //Log full error details
+        if ((_b = error.response) === null || _b === void 0 ? void 0 : _b.data) {
+            console.error("Error Response data: ", JSON.stringify(error.response.data, null, 2));
+        }
+        else {
+            console.error("No response data. Full Error:", error);
+        }
         throw new Error(`Failed to remove user with ID ${userId}`);
     }
 });
