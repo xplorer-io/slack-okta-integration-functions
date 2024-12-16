@@ -55,6 +55,9 @@ export const onboardToOkta = async (
       }
     );
 
+    // response from okta
+    console.log("Response from Okta: ", JSON.stringify(response.data, null, 2));
+
     console.log(
       `Onboarded user: ${firstName} ${lastName} , email :  (${email})`
     );
@@ -81,7 +84,10 @@ export const onboardToOkta = async (
 // Delete user from Okta
 export const removeFromOkta = async (userId: string): Promise<void> => {
   try {
-    await oktaApi.delete(`/users/${userId}`);
+    const response = await oktaApi.delete(`/users/${userId}`);
+    console.log(
+      `Response from Okta for deleting user  ${userId} : Status code: ${response.status}`
+    );
     console.log(`Removed user with ID: ${userId}`);
   } catch (error: any) {
     console.error(
@@ -89,6 +95,16 @@ export const removeFromOkta = async (userId: string): Promise<void> => {
         error.response?.statusText || error.message
       }`
     );
+
+    //Log full error details
+    if (error.response?.data) {
+      console.error(
+        "Error Response data: ",
+        JSON.stringify(error.response.data, null, 2)
+      );
+    } else {
+      console.error("No response data. Full Error:", error);
+    }
     throw new Error(`Failed to remove user with ID ${userId}`);
   }
 };
