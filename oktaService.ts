@@ -88,7 +88,7 @@ export const removeFromOkta = async (userId: string): Promise<void> => {
     console.log(
       `Response from Okta for deleting user  ${userId} : Status code: ${response.status}`
     );
-    console.log(`Removed user with ID: ${userId}`);
+    console.log(`Removed Okta user with ID: ${userId}`);
   } catch (error: any) {
     console.error(
       `Error removing user with ID ${userId}: ${
