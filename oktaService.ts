@@ -41,7 +41,9 @@ export const onboardToOkta = async (
           lastName,
           email,
           login: email,
-          mobilePhone: "000-000-000",
+        },
+        credentials: {
+          password: { value: "tlpWENT2m" },
         },
       },
       {
