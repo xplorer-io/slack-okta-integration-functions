@@ -37,7 +37,7 @@ const fetchOktaUsers = () => __awaiter(void 0, void 0, void 0, function* () {
 exports.fetchOktaUsers = fetchOktaUsers;
 // Create user in Okta
 const onboardToOkta = (email, firstName, lastName) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
         const response = yield oktaApi.post("/users", {
             profile: {
@@ -45,6 +45,7 @@ const onboardToOkta = (email, firstName, lastName) => __awaiter(void 0, void 0, 
                 lastName,
                 email,
                 login: email,
+                mobilePhone: "000-000-000",
             },
         }, {
             params: {
@@ -57,6 +58,13 @@ const onboardToOkta = (email, firstName, lastName) => __awaiter(void 0, void 0, 
     }
     catch (error) {
         console.error(`Error onboarding user ${email}: ${((_a = error.response) === null || _a === void 0 ? void 0 : _a.statusText) || error.message}`);
+        // log full error detials
+        if ((_b = error.response) === null || _b === void 0 ? void 0 : _b.data) {
+            console.error("Error Response data : ", JSON.stringify(error.response.data, null, 2));
+        }
+        else {
+            console.error("No response data. Full Error: ", error);
+        }
         throw new Error(`Failed to onboard user ${email}`);
     }
 });

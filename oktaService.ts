@@ -41,7 +41,7 @@ export const onboardToOkta = async (
           lastName,
           email,
           login: email,
-          // mobilePhone: "000-000-000",
+          mobilePhone: "000-000-000",
         },
       },
       {
@@ -57,7 +57,21 @@ export const onboardToOkta = async (
       `Onboarded user: ${firstName} ${lastName} , email :  (${email})`
     );
   } catch (error: any) {
-    console.error(`Error onboarding user ${email}: ${error.message}`);
+    console.error(
+      `Error onboarding user ${email}: ${
+        error.response?.statusText || error.message
+      }`
+    );
+
+    // log full error detials
+    if (error.response?.data) {
+      console.error(
+        "Error Response data : ",
+        JSON.stringify(error.response.data, null, 2)
+      );
+    } else {
+      console.error("No response data. Full Error: ", error);
+    }
     throw new Error(`Failed to onboard user ${email}`);
   }
 };
