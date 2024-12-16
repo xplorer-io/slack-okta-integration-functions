@@ -1,7 +1,6 @@
 import { HttpFunction } from "@google-cloud/functions-framework";
 import { onboardToOkta, removeFromOkta, fetchOktaUsers } from "./oktaService";
-import { fetchActiveSlackUsers } from "./slackService";
-import { OktaUser, Slackuser } from "./types";
+import { OktaUser } from "./types";
 import dotenv from "dotenv";
 dotenv.config({ path: "./env.local" });
 

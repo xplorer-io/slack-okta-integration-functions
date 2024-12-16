@@ -1,49 +1,119 @@
-# Slack-Okta-Integration
+# Slack-Okta User Management
 
-### Purpose
+This project is a **Node.js application** that automates user management between **Slack** and **Okta**. It listens to Slack events and synchronizes user accounts in Okta, including:
 
-This automation script is to sync our users between two platforms (i.e. Slack and Okta) by consuming thier REST API.
+- **Onboarding users to Okta** when they join Slack.
+- **Removing users from Okta** when they are deleted or deactivated in Slack.
 
-### Scenario
+The project is deployed as a **Google Cloud Run Function**, triggered via Slack events.
 
-When someone new joins our slack channel we would like them to be also added into Okta to get access to our hashicorp vault and other platforms.
+---
 
-## Testing locally
+## Table of Contents
 
-### Prerequisite
+1. [Features](#features)
+2. [Architecture Overview](#architecture-overview)
+3. [Prerequisites](#prerequisites)
+4. [Installation](#installation)
+5. [Environment Configuration](#environment-configuration)
+6. [How It Works](#how-it-works)
+7. [Deployment](#deployment)
+8. [Usage](#usage)
+9. [Logging and Error Handling](#logging-and-error-handling)
+10. [Contributing](#contributing)
+11. [License](#license)
 
-To perform test on individual services files to see what response we expect from the API. You can run the following command
+---
 
-1. ` pnpm install`
-2. For requesting users from Slack
+## Features
 
+- **Slack Event Handling**:
+
+  - Detects when a new user joins a Slack workspace (`team_join` event).
+  - Detects user profile updates and deletions (`user_change` event).
+
+- **Okta Integration**:
+
+  - Onboards users into Okta with their **email, first name, and last name**.
+  - Removes users from Okta when they are deleted from Slack.
+
+- **Robust Error Handling**:
+  - Logs Slack event details.
+  - Logs responses and errors from Okta API calls.
+
+---
+
+## Architecture Overview
+
+The application listens to Slack events via the Slack Events API, processes them, and performs corresponding operations in Okta using Okta's API.
+
+**Workflow**:
+
+1. **Slack Event Trigger**:
+
+   - Slack sends events to a Google Cloud Run Function endpoint.
+
+2. **Event Handling**:
+
+   - For `team_join`, the app onboards users to Okta.
+   - For `user_change` (when `user.deleted` is `true`), it removes the user from Okta.
+
+3. **Okta API**:
+   - Uses Okta's REST API to create and delete users.
+
+---
+
+## Prerequisites
+
+- Node.js (v16 or later)
+- Slack Workspace and Admin Access
+- Okta Developer Account with API Token
+- Google Cloud Platform Account
+
+---
+
+## Installation
+
+## How It Works
+
+**Event Types Handled:**
+
+1. User Onboarding (`team_join`):
+
+   - Slack sends user details when a user member joins.
+   - The app calls the Okta API to create the user.
+
+2. User deletion (`user_change` with `deleted: true`):
+   - Slack sends the updated user details.
+   - The app matches the user in Okta based on full name and removes them.
+
+## Deployment
+
+**Deploy to Google Cloud Run Functions:**
+
+1. Login to GCP:
+
+```bash
+gcloud auth login
 ```
-pnpm run fetchSlackUsers
+
+2. Deploy function:
+
+```bash
+pnpm run dev
 ```
 
-3. For requesting users from Okta
+3. Get the Function URL and configure slack's event subscriptions:
+   - Add the URL to Slack's "Event Subscriptions" settings in your Slack workspace.
 
-```
-pnpm run fetchOktaUsers
-```
+## Usage
 
-> Since `ts-node` is giving out too much of issue [1](https://stackoverflow.com/questions/62096269/unknown-file-extension-ts-for-a-typescript-file), [2](https://github.com/TypeStrong/ts-node/issues/2100) while trying to run it, we will be using tsx.
-
-## Okta API
-
-We need to consume 3 API's from okta to achieve our goals.
-
-1. List all users
-   https://developer.okta.com/docs/api/openapi/okta-management/management/tag/User/#tag/User/operation/listUsers
-
-2. Create a user
-   https://developer.okta.com/docs/api/openapi/okta-management/management/tag/User/#tag/User/operation/createUser
-
-3. Delete a user
-   https://developer.okta.com/docs/api/openapi/okta-management/management/tag/User/#tag/User/operation/deleteUser
-
-## Slack API
-
-Consume API [users.list](https://api.slack.com/methods/users.list)
-
-- Since slack does not provide with only active users list, we have to filter out the result (bot users, deactived/deleted users)
+1. Slack Events Configuration:
+   - Enable Slack's Events API.
+   - Add the following event types:
+     - `team_join`
+     - `user_change`
+   - set the request URL to your deployed Google Cloud Run Function.
+2. Triggeing Events:
+   - Add a user to Slack -> Onboards the users to Okta.
+   - Removes a user from Slack -> Deletes the user from Okta.

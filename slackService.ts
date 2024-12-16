@@ -1,3 +1,4 @@
+// not being used right now
 import { WebClient } from "@slack/web-api";
 import { Slackuser } from "./types";
 
