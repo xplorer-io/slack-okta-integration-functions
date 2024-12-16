@@ -19,3 +19,15 @@ export interface OktaUser {
     email: string;
   };
 }
+
+export interface SlackEvent {
+  type: string;
+  token: string;
+  team_id: string;
+  api_app_id: string;
+  event: {
+    type: string;
+    event_ts: string;
+    user: string;
+  };
+}

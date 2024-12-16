@@ -47,6 +47,7 @@ const handleSlackEvent = (event) => __awaiter(void 0, void 0, void 0, function* 
 });
 // Main Google Cloud Function entry point
 const slackEventHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Received slack event: ", JSON.stringify(req.body, null, 2));
     try {
         // Handle URL verification
         if (req.body.type === "url_verification") {

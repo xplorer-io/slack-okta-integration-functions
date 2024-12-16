@@ -14,6 +14,8 @@ const handleSlackEvent = async (event: any) => {
     const lastName = event.user.profile.last_name;
 
     console.log(`New user joined: ${userEmail}`);
+    console.log(`New user first name: ${firstName}`);
+    console.log(`New user last name: ${lastName}`);
     await onboardToOkta(userEmail, firstName, lastName);
   } else if (event?.type === "user_change" && event.user.deleted) {
     // User removed from Slack group
@@ -38,6 +40,7 @@ const handleSlackEvent = async (event: any) => {
 
 // Main Google Cloud Function entry point
 export const slackEventHandler: HttpFunction = async (req, res) => {
+  console.log("Received slack event: ", JSON.stringify(req.body, null, 2));
   try {
     // Handle URL verification
     if (req.body.type === "url_verification") {
