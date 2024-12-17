@@ -1,24 +1,11 @@
 # Slack-Okta User Management
 
-This project is a **Node.js application** that automates user management between **Slack** and **Okta**. It listens to Slack events and synchronizes user accounts in Okta, including:
+This project is a **Node.js app** that automates user management between **Slack** and **Okta**. It listens to Slack events and synchronizes user accounts in Okta, including:
 
 - **Onboarding users to Okta** when they join Slack.
 - **Removing users from Okta** when they are deleted or deactivated in Slack.
 
 The project is deployed as a **Google Cloud Run Function**, triggered via Slack events.
-
----
-
-## Table of Contents
-
-1. [Features](#features)
-2. [Architecture Overview](#architecture-overview)
-3. [Prerequisites](#prerequisites)
-4. [Installation](#installation)
-5. [Environment Configuration](#environment-configuration)
-6. [How It Works](#how-it-works)
-7. [Deployment](#deployment)
-8. [Usage](#usage)
 
 ---
 
@@ -56,51 +43,3 @@ The application listens to Slack events via the Slack Events API, processes them
 - Google Cloud Platform Account
 
 ---
-
-## Installation
-
-## How It Works
-
-**Event Types Handled:**
-
-1. User Onboarding (`team_join`):
-
-   - Slack sends user details when a user member joins.
-   - The app calls the Okta API to create the user.
-
-2. User deletion (`user_change` with `deleted: true`):
-   - Slack sends the updated user details.
-   - The app matches the user in Okta based on full name and removes them.
-
----
-
-## Deployment
-
-**Deploy to Google Cloud Run Functions:**
-
-1. Login to GCP:
-
-```bash
-gcloud auth login
-```
-
-2. Deploy function:
-
-```bash
-pnpm run dev
-```
-
-3. Get the Function URL and configure slack's event subscriptions:
-   - Add the URL to Slack's "Event Subscriptions" settings in your Slack workspace.
-
-## Usage
-
-1. Slack Events Configuration:
-   - Enable Slack's Events API.
-   - Add the following event types:
-     - `team_join`
-     - `user_change`
-   - set the request URL to your deployed Google Cloud Run Function.
-2. Triggeing Events:
-   - Add a user to Slack -> Onboards the users to Okta.
-   - Removes a user from Slack -> Deletes the user from Okta.
