@@ -43,3 +43,10 @@ The application listens to Slack events via the Slack Events API, processes them
 - Google Cloud Platform Account
 
 ---
+
+## Deploy to Google Cloud
+
+- Install [gCloud CLI](https://cloud.google.com/sdk/docs/install)
+- Run `gcloud init` to authenticate your account with GCP
+- `pnpm run gcp-build`
+- `pnpm run deploy`
