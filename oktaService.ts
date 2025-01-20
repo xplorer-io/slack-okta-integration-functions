@@ -77,7 +77,7 @@ export const onboardToOkta = async (
     } else {
       console.error("No response data. Full Error: ", error);
     }
-    throw new Error(`Failed to onboard user ${email}`);
+    throw new Error(`Failed to onboard user ${email} to Okta`);
   }
 };
 

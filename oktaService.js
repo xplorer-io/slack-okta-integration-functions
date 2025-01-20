@@ -79,7 +79,7 @@ const removeFromOkta = (userId) => __awaiter(void 0, void 0, void 0, function* (
     try {
         const response = yield oktaApi.delete(`/users/${userId}`);
         console.log(`Response from Okta for deleting user  ${userId} : Status code: ${response.status}`);
-        console.log(`Removed user with ID: ${userId}`);
+        console.log(`Removed Okta user with ID: ${userId}`);
     }
     catch (error) {
         console.error(`Error removing user with ID ${userId}: ${((_a = error.response) === null || _a === void 0 ? void 0 : _a.statusText) || error.message}`);
