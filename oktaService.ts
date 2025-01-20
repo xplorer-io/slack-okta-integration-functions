@@ -59,7 +59,7 @@ export const onboardToOkta = async (
     console.log("Response from Okta: ", JSON.stringify(response.data, null, 2));
 
     console.log(
-      `Onboarded user: ${firstName} ${lastName} , email :  (${email})`
+      `Onboarded user to Okta: ${firstName} ${lastName} , email :  (${email})`
     );
   } catch (error: any) {
     console.error(
