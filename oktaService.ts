@@ -33,27 +33,14 @@ export const onboardToOkta = async (
   lastName: string
 ): Promise<void> => {
   try {
-    const response = await oktaApi.post(
-      "/users",
-      {
-        profile: {
-          firstName,
-          lastName,
-          email,
-          login: email,
-        },
-        credentials: {
-          password: { value: "tlpWENT2m" },
-        },
+    const response = await oktaApi.post("/users", {
+      profile: {
+        firstName,
+        lastName,
+        email,
+        login: email,
       },
-      {
-        params: {
-          activate: "true",
-          provider: "false",
-          nextLogin: "changePassword",
-        },
-      }
-    );
+    });
 
     // response from okta
     console.log("Response from Okta: ", JSON.stringify(response.data, null, 2));
