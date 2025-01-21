@@ -37,6 +37,7 @@ const handleSlackEvent = async (event: any) => {
           `Matched Slack user ${slackFullName} with okta user ID: ${matchedUser.id}`
         );
 
+        // remove user from okta
         await removeFromOkta(matchedUser.id);
       } else {
         console.error(

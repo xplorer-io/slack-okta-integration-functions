@@ -68,9 +68,25 @@ export const onboardToOkta = async (
   }
 };
 
+//Deactivate from Okta
+export const deactivateOktaUser = async (userId: string): Promise<void> => {
+  try {
+    await oktaApi.post(`/users/${userId}/lifecycle/deactivate`);
+    console.log(`Successfully deactivated User: ${userId}`);
+  } catch (error: any) {
+    console.error(
+      `Error deactivating user ${userId} : ${
+        error.response?.statusText || error.message
+      }`
+    );
+    throw new Error(`Failed to deactivate user ${userId}`);
+  }
+};
+
 // Delete user from Okta
 export const removeFromOkta = async (userId: string): Promise<void> => {
   try {
+    await deactivateOktaUser(userId);
     const response = await oktaApi.delete(`/users/${userId}`);
     console.log(
       `Response from Okta for deleting user  ${userId} : Status code: ${response.status}`
