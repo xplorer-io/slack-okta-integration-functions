@@ -69,34 +69,40 @@ export const onboardToOkta = async (
 };
 
 //Deactivate from Okta
-export const deactivateOktaUser = async (userId: string): Promise<void> => {
+export const deactivateOktaUser = async (oktaUser: OktaUser): Promise<void> => {
   try {
-    await oktaApi.post(`/users/${userId}/lifecycle/deactivate`);
-    console.log(`Successfully deactivated User: ${userId}`);
+    await oktaApi.post(`/users/${oktaUser.id}/lifecycle/deactivate`);
+    console.log(
+      `Successfully deactivated User: ${oktaUser.profile.firstName} ${oktaUser.profile.lastName} , id: ${oktaUser.id}`
+    );
   } catch (error: any) {
     console.error(
-      `Error deactivating user ${userId} : ${
+      `Error deactivating user ${oktaUser.id} : ${
         error.response?.statusText || error.message
       }`
     );
-    throw new Error(`Failed to deactivate user ${userId}`);
+    throw new Error(
+      `Failed to deactivate user ${oktaUser.profile.firstName} ${oktaUser.profile.lastName} , id: ${oktaUser.id}`
+    );
   }
 };
 
 // Delete user from Okta
-export const removeFromOkta = async (userId: string): Promise<void> => {
+export const removeFromOkta = async (oktaUser: OktaUser): Promise<void> => {
   try {
-    await deactivateOktaUser(userId);
-    const response = await oktaApi.delete(`/users/${userId}`);
+    await deactivateOktaUser(oktaUser);
+    const response = await oktaApi.delete(`/users/${oktaUser.id}`);
     console.log(
-      `Response from Okta for deleting user  ${userId} : Status code: ${response.status}`
+      `Response from Okta for deleting user: ${oktaUser.profile.firstName} ${oktaUser.profile.lastName}, id: ${oktaUser.id} : Status code: ${response.status}`
     );
-    console.log(`Removed Okta user with ID: ${userId}`);
+    console.log(
+      `Removed Okta user: ${oktaUser.profile.firstName} ${oktaUser.profile.lastName}, with Id: ${oktaUser.id}`
+    );
   } catch (error: any) {
     console.error(
-      `Error removing user with ID ${userId}: ${
-        error.response?.statusText || error.message
-      }`
+      `Error removing user with ${oktaUser.profile.firstName} ${
+        oktaUser.profile.lastName
+      } ,ID: ${oktaUser.id}: ${error.response?.statusText || error.message}`
     );
 
     //Log full error details
@@ -108,6 +114,8 @@ export const removeFromOkta = async (userId: string): Promise<void> => {
     } else {
       console.error("No response data. Full Error:", error);
     }
-    throw new Error(`Failed to remove user with ID ${userId}`);
+    throw new Error(
+      `Failed to remove user with ${oktaUser.profile.firstName} ${oktaUser.profile.lastName} ,ID: ${oktaUser.id}`
+    );
   }
 };

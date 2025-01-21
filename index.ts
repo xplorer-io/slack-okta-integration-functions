@@ -38,7 +38,7 @@ const handleSlackEvent = async (event: any) => {
         );
 
         // remove user from okta
-        await removeFromOkta(matchedUser.id);
+        await removeFromOkta(matchedUser);
       } else {
         console.error(
           `No matching okta user found for slack user : ${slackFullName}`
