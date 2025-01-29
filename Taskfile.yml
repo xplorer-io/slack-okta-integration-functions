@@ -1,0 +1,150 @@
+version: 3
+
+dotenv:
+  - ./configuration/defaults.conf
+
+vars:
+  FUNCTION_ARTIFACT: terraform/bundle.zip
+
+tasks:
+  install:
+    desc: Install dependencies (node modules)
+    cmds:
+      - pnpm install
+
+  update-dependencies:
+    desc: Update dependencies (node modules)
+    cmds:
+      - pnpm update && pnpm upgrade
+
+  test:
+    desc: Run unit tests using jest
+    cmds:
+      - pnpm run test
+
+  compile:
+    desc: Compile typescript files
+    cmds:
+      - pnpm run compile
+      - cp package.json dist/
+      # - cp pnpm-lock.yaml dist/
+
+  clean:
+    desc: Clean artifacts and dependencies
+    cmds:
+      - rm -rf dist/
+      - rm -rf {{.FUNCTION_ARTIFACT}}
+      - rm -rf out/
+
+  package:
+    desc: Package and zip the application code for deployment
+    deps: [clean]
+    cmds:
+      - defer: { task: compile }
+      - rm -rf node_modules && pnpm install
+
+  switch-to-terraform-workspace:
+    dir: terraform
+    desc: Switch to the terraform workspace
+    silent: true
+    cmds:
+      - |
+        GREEN='\033[0;32m'
+        if [ "${TERRAFORM_WORKSPACE}" == "prod" ] && [ -z "${GITHUB_REPOSITORY}" ]; then
+          RED='\033[0;31m'
+          NC='\033[0m' # No Color
+          echo -e "${RED}###############################################################"
+          echo -e "# WARNING: You are about to make changes to the production    #"
+          echo -e "# environment.                                                #"
+          echo -e "#                                                             #"
+          echo -e "# If creating a feature branch, update 'TERRAFORM_WORKSPACE'  #"
+          echo -e "# in 'configuration/defaults.conf' and run this command       #"
+          echo -e "# again.                                                      #"
+          echo -e "#                                                             #"
+          echo -e "# Please confirm to proceed.                                  #"
+          echo -e "###############################################################${NC}\n"
+          read -p "Are you sure you want to proceed? (yes/no): " confirmation
+          if [ "$confirmation" != "yes" ]; then
+            echo "Operation aborted."
+            exit 1
+          fi
+        fi
+        terraform workspace new ${TERRAFORM_WORKSPACE} > /dev/null 2>&1 || true
+        terraform workspace select ${TERRAFORM_WORKSPACE}
+        echo -e "Successfully switched to terraform workspace: ${GREEN}${TERRAFORM_WORKSPACE}${NC}"
+
+  terraform-providers-lock:
+    dir: terraform
+    desc: Lock terraform providers for all platforms
+    cmds:
+      - |
+        terraform providers lock -platform=windows_amd64 -platform=darwin_amd64 -platform=linux_amd64
+
+  terraform-fmt:
+    dir: terraform
+    desc: Format terraform files
+    cmds:
+      - |
+        terraform fmt
+
+  terraform-init:
+    dir: terraform
+    desc: Initialize terraform backend, providers, plugins and modules
+    deps:
+      - terraform-providers-lock
+    cmds:
+      - |
+        terraform init \
+        -backend-config="bucket=${ARTIFACTS_BUCKET_NAME}" \
+        -backend-config="prefix=${ARTIFACTS_BUCKET_TERRAFORM_PREFIX}"
+      - terraform validate -no-color
+
+  terraform-plan:
+    dir: terraform
+    desc: Creates an execution plan, which lets you preview the changes that Terraform plans to make to your infrastructure.
+    cmds:
+      - task: terraform-init
+      - task: switch-to-terraform-workspace
+      - task: package
+      - |
+        terraform plan \
+        -no-color \
+        -var "artifacts_bucket_name=${ARTIFACTS_BUCKET_NAME}" \
+        -var "project_id=${GOOGLE_CLOUD_PROJECT_ID}" \
+        -var "project_number=${GOOGLE_PROJECT_NUMBER}" \
+        -var "region=${GOOGLE_CLOUD_PROJECT_REGION}"
+
+  terraform-apply:
+    dir: terraform
+    desc: Apply the planned changes to the target infrastructure
+    cmds:
+      - defer: { task: clean }
+      - task: terraform-init
+      - task: switch-to-terraform-workspace
+      - task: package
+      - |
+        terraform apply -no-color -auto-approve \
+        -var "artifacts_bucket_name=${ARTIFACTS_BUCKET_NAME}" \
+        -var "project_id=${GOOGLE_CLOUD_PROJECT_ID}" \
+        -var "project_number=${GOOGLE_PROJECT_NUMBER}" \
+        -var "region=${GOOGLE_CLOUD_PROJECT_REGION}"
+
+  terraform-upgrade-providers:
+    dir: terraform
+    desc: Upgrade terraform providers
+    cmds:
+      - |
+        terraform init -upgrade
+
+  terraform-destroy:
+    dir: terraform
+    desc: Delete all resources created by terraform
+    cmds:
+      - task: switch-to-terraform-workspace
+      - |
+        terraform destroy -auto-approve \
+        -var "artifacts_bucket_name=${ARTIFACTS_BUCKET_NAME}" \
+        -var "project_id=${GOOGLE_CLOUD_PROJECT_ID}" \
+        -var "project_number=${GOOGLE_PROJECT_NUMBER}" \
+        -var "region=${GOOGLE_CLOUD_PROJECT_REGION}" \
+        -var "docker_image_tag={{.DOCKER_IMAGE_TAG}}"

@@ -1,7 +1,7 @@
 import { HttpFunction } from "@google-cloud/functions-framework";
-import { onboardToOkta, removeFromOkta, fetchOktaUsers } from "./oktaService";
-import { OktaUser } from "./types";
 import dotenv from "dotenv";
+import { OktaUser } from "./interfaceTypes";
+import { fetchOktaUsers, onboardToOkta, removeFromOkta } from "./oktaService";
 dotenv.config({ path: "./env.local" });
 
 // logic for handling slack events
