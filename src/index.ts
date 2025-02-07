@@ -1,6 +1,6 @@
-import { HttpFunction } from "@google-cloud/functions-framework";
+import type { HttpFunction } from "@google-cloud/functions-framework";
 import dotenv from "dotenv";
-import { OktaUser } from "./interfaceTypes";
+import type { OktaUser } from "./interfaceTypes";
 import { fetchOktaUsers, onboardToOkta, removeFromOkta } from "./oktaService";
 dotenv.config({ path: "./env.local" });
 

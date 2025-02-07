@@ -1,5 +1,5 @@
 import axios from "axios";
-import { OktaUser } from "./interfaceTypes";
+import type { OktaUser } from "./interfaceTypes";
 
 // Axios instance for Okta API
 const oktaApi = axios.create({

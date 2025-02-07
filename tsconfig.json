@@ -1,15 +1,16 @@
 {
-    "compilerOptions": {
-        "target": "es2016",
-        "module": "CommonJS",
-        "rootDir": "src",
-        "outDir": "dist",
-        "moduleResolution": "node",
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "strict": true,
-        "skipLibCheck": true
-    },
-    "include": ["src/**/*.ts", "index.ts", "src/types.ts"],
-    "exclude": ["node_modules"]
+  "compilerOptions": {
+    "target": "ES2022",
+    "moduleDetection": "force",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true
+  },
+  "include": ["src/**/*.ts", "index.ts", "src/types.ts"],
+  "exclude": ["node_modules"]
 }

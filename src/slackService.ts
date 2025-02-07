@@ -1,6 +1,6 @@
 // not being used right now
 import { WebClient } from "@slack/web-api";
-import { Slackuser } from "./interfaceTypes";
+import type { Slackuser } from "./interfaceTypes";
 
 // initialize slack client
 const slackClient = new WebClient(process.env.SLACK_YASH_TOKEN);
