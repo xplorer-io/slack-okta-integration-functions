@@ -2,9 +2,8 @@
   "name": "slack-okta-integration",
   "main": "index.js",
   "scripts": {
-    "compile": "tsc",
-    "dev": "pnpm run build && npx @google-cloud/functions-framework --target=slackEventHandler --source=.",
-    "gcp-build": "pnpm run compile"
+    "build": "tsc",
+    "dev": "pnpm run build && npx @google-cloud/functions-framework --target=slackEventHandler --source=."
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^3.4.2",
