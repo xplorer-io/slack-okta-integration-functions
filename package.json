@@ -2,7 +2,7 @@
   "name": "slack-okta-integration",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "compile": "tsc",
     "dev": "pnpm run build && npx @google-cloud/functions-framework --target=slackEventHandler --source=."
   },
   "dependencies": {
