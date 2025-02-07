@@ -1,13 +1,13 @@
 {
   "name": "slack-okta-integration",
+  "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "deploy": "gcloud functions deploy slackEventHandler --gen2 --region=us-east1 --source=. --entry-point=slackEventHandler --runtime=nodejs20 --trigger-http --allow-unauthenticated",
+    "compile": "tsc",
     "dev": "pnpm run build && npx @google-cloud/functions-framework --target=slackEventHandler --source=.",
-    "gcp-build": "pnpm run build"
+    "gcp-build": "pnpm install"
   },
   "dependencies": {
-    "@google-cloud/functions-framework": "^3.0.0",
+    "@google-cloud/functions-framework": "^3.4.2",
     "@slack/web-api": "^7.7.0",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
