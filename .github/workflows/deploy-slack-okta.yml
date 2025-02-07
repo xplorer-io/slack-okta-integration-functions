@@ -46,7 +46,7 @@ jobs:
         run: task install
 
       - name: Terraform Plan
-        run: task terraform:plan
+        run: task terraform-plan
 
       - name: Terraform Apply
-        run: task terraform:apply
+        run: task terraform-apply
