@@ -4,8 +4,7 @@
   "scripts": {
     "compile": "tsc",
     "dev": "pnpm run build && npx @google-cloud/functions-framework --target=slackEventHandler --source=.",
-    "gcp-build": "pnpm install",
-    "build": "tsc"
+    "gcp-build": "pnpm run compile"
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^3.4.2",
