@@ -1,58 +1,55 @@
-name: Deploy slack-okta-integration to Google Cloud functions
+name: GCP Build and Deploy
 
 on:
   push:
     branches:
       - main
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+permissions:
+  id-token: write
+  contents: read
 
-    permissions:
-      contents: read
-      id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
 
     steps:
       # Checkout the repository
       - name: Checkout code
         uses: "actions/checkout@v4"
 
+        # Authenticate with Google Cloud
+      - id: "auth"
+        uses: "google-github-actions/auth@v2.0.0"
+        with:
+          workload_identity_provider: ${{secrets.GOOGLE_CLOUD_WORKLOAD_IDENTITY_PROVIDER }}
+
+      # Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+
+      # Setup pnpm
       - name: pnpm-setup
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
           version: 9
 
-      # Set up Node.js
-      - name: Set up Node.js
-        uses: "actions/setup-node@v3"
-        with:
-          node-version: 20
-
-      # Install dependencies
-      - name: Install dependencies
-        run: pnpm install
-
-      # Build the project
-      - name: Build the project
-        run: pnpm run build
-
-      # Authenticate with Google Cloud
-      - id: "auth"
-        name: Authenticate with Google Cloud
-        uses: "google-github-actions/auth@v2"
-        with:
-          project_id: pras-sandbox-405410
-          workload_identity_provider: ${{secrets.GOOGLE_CLOUD_WORKLOAD_IDENTITY_PROVIDER }}
-
-      # Deploy to Google Cloud Functions
-      - name: "Deploy to gen2 cloud function"
+      # Setup taskfile
+      - name: Setup taskfile
         run: |
-          gcloud functions deploy slackEventHandler \
-          --gen2 \
-          --region=us-east1 \
-          --runtime=nodejs20 \
-          --source=. \
-          --entry-point=slackEventHandler \
-          --trigger-http \
-          --allow-unauthenticated
+          sudo snap install task --classic
+
+      - name: Install Dependencies
+        run: task install
+
+      - name: Run Tests
+        run: task test
+
+      - name: Terraform Plan
+        run: task terraform:plan
+
+      - name: Terraform Apply
+        run: task terraform:apply
