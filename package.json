@@ -3,7 +3,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "tsc",
-    "dev": "pnpm run compile && npx @google-cloud/functions-framework --target=slackEventHandler --source=."
+    "dev": "pnpm run compile && npx @google-cloud/functions-framework --target=slackEventHandler --source=dist"
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^3.4.5",
