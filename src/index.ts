@@ -65,7 +65,7 @@ export const slackEventHandler: HttpFunction = async (req, res) => {
     // Handle Slack events
     await handleSlackEvent(req.body.event);
 
-    res.status(200).send("Event processed successfully");
+    res.status(200).send("Hello world. Everything is working fine");
   } catch (error) {
     console.error("Error processing event:", error);
     res.status(500).send("Internal Server Error");
