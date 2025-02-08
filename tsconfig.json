@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES2016",
+    "target": "ES2022",
     "module": "CommonJS",
-    "moduleDetection": "force",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
     "rootDir": "src",
     "outDir": "dist",
-    "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
     "strict": true
   },

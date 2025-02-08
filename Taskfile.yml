@@ -22,6 +22,11 @@ tasks:
     cmds:
       - pnpm run test
 
+  dev:
+    desc: Run locally
+    cmds:
+      - pnpm run dev
+
   compile:
     desc: Compile typescript files
     cmds:
